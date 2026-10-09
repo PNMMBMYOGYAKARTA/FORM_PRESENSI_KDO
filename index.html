@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Presensi KDO - PT Permodalan Nasional Madani</title>
+  
+  <!-- Bootstrap 5 & Google Fonts & FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --pnm-blue: #0A3254;
+      --pnm-blue-accent: #0056B3;
+      --pnm-green: #00A859;
+      --pnm-green-hover: #008848;
+      --pnm-bg: #F3F6FA;
+      --pnm-card-bg: #FFFFFF;
+      --text-muted: #64748B;
+      --border-color: #E2E8F0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--pnm-bg);
+      color: #1E293B;
+      min-height: 100vh;
+      padding-bottom: 3rem;
+    }
+
+    /* Header Banner */
+    .pnm-header {
+      background: linear-gradient(135deg, #0A3254 0%, #001E36 100%);
+      color: #ffffff;
+      padding: 3rem 1rem 4.5rem 1rem;
+      border-bottom: 4px solid var(--pnm-green);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pnm-header::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: rgba(0, 168, 89, 0.1);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .pnm-badge {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      color: #38BDF8;
+      padding: 6px 18px;
+      border-radius: 50px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Card Form Styles */
+    .card-dashboard {
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(10, 50, 84, 0.08);
+      background: var(--pnm-card-bg);
+      margin-top: -2.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .form-section-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+      color: var(--pnm-blue);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-section-title::after {
+      content: "";
+      flex-grow: 1;
+      height: 1px;
+      background: var(--border-color);
+      margin-left: 8px;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #334155;
+      font-size: 0.875rem;
+      margin-bottom: 8px;
+    }
+
+    .input-group-custom {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94A3B8;
+      z-index: 10;
+      font-size: 1rem;
+      transition: color 0.2s ease;
+    }
+
+    .form-control-custom {
+      border-radius: 12px;
+      padding: 12px 16px 12px 46px;
+      border: 1.5px solid var(--border-color);
+      font-size: 0.95rem;
+      font-weight: 500;
+      background-color: #F8FAFC;
+      transition: all 0.25s ease;
+      width: 100%;
+    }
+
+    .form-control-custom:focus {
+      outline: none;
+      background-color: #FFFFFF;
+      border-color: var(--pnm-blue-accent);
+      box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.12);
+    }
+
+    .form-control-custom:focus + .input-icon {
+      color: var(--pnm-blue-accent);
+    }
+
+    .form-control-custom[readonly] {
+      background-color: #F1F5F9;
+      border-color: #E2E8F0;
+      color: #475569;
+      font-weight: 600;
+      cursor: not-allowed;
+    }
+
+    .autofill-highlight {
+      animation: highlightPulse 0.8s ease;
+    }
+
+    @keyframes highlightPulse {
+      0% { border-color: var(--pnm-green); box-shadow: 0 0 0 4px rgba(0, 168, 89, 0.25); }
+      100% { border-color: var(--border-color); }
+    }
+
+    /* Drag & Drop Upload Zone */
+    .upload-card {
+      border: 2px dashed #CBD5E1;
+      border-radius: 16px;
+      padding: 18px;
+      background: #FAFCFF;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .upload-card:hover, .upload-card.dragover {
+      border-color: var(--pnm-green);
+      background: #F0FDF4;
+      transform: translateY(-2px);
+    }
+
+    .upload-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #E0F2FE;
+      color: var(--pnm-blue-accent);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .upload-card:hover .upload-icon-wrapper {
+      background: #DCFCE7;
+      color: var(--pnm-green);
+    }
+
+    .upload-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1E293B;
+      margin-bottom: 2px;
+    }
+
+    .upload-hint {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+    }
+
+    .preview-container {
+      position: relative;
+      display: none;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-remove-preview {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(225, 29, 72, 0.85);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-remove-preview:hover {
+      background: rgba(225, 29, 72, 1);
+    }
+
+    /* Button Styling */
+    .btn-pnm {
+      background: linear-gradient(135deg, var(--pnm-green) 0%, #008F4C 100%);
+      color: #fff;
+      font-weight: 700;
+      padding: 14px 28px;
+      border-radius: 14px;
+      border: none;
+      box-shadow: 0 8px 20px rgba(0, 168, 89, 0.25);
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-pnm:hover {
+      background: linear-gradient(135deg, #008F4C 0%, #00733D 100%);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0, 168, 89, 0.35);
+    }
+
+    .btn-pnm:active {
+      transform: translateY(0);
+    }
+
+    .btn-pnm:disabled {
+      background: #94A3B8;
+      box-shadow: none;
+      transform: none;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Banner -->
+  <div class="pnm-header text-center">
+    <div class="container">
+      <span class="pnm-badge mb-2 d-inline-block">
+        <i class="fa-solid fa-shield-halved me-1"></i> PT Permodalan Nasional Madani
+      </span>
+      <h2 class="fw-extrabold mb-1 tracking-tight">DASHBOARD PRESENSI KDO</h2>
+      <p class="text-white-50 mb-0 small">Sistem Monitoring & Monitoring Kendaraan Dinas Operasional</p>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10">
+        <div class="card card-dashboard p-4 p-md-5">
+
+          <form id="formKDO" onsubmit="handleFormSubmit(event)">
+            
+            <!-- Section 1: Informasi Pengguna & Kendaraan -->
+            <div class="form-section-title">
+              <i class="fa-solid fa-user-gear"></i> Informasi Pengguna & Kendaraan
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="pengguna">Nama Pengguna KDO</label>
+              <div class="input-group-custom">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input type="text" id="pengguna" class="form-control-custom" placeholder="Masukkan Nama Lengkap Anda" required>
+              </div>
+            </div>
+
+            <!-- Plat Nomor (Autocompletion) -->
+            <div class="mb-3">
+              <label class="form-label" for="platNomor">Plat Nomor Kendaraan</label>
+              <div class="input-group-custom">
+                <i class="fa-solid fa-id-card input-icon"></i>
+                <input type="text" id="platNomor" class="form-control-custom" list="platList" placeholder="Ketik atau pilih Plat Nomor..." oninput="autoFillDetail()" autocomplete="off" required>
+              </div>
+              <datalist id="platList"></datalist>
+              <div class="form-text text-muted ms-1 mt-1" style="font-size: 0.775rem;">
+                <i class="fa-solid fa-circle-info me-1 text-primary"></i> Data Tipe Motor & Unit Kerja terisi otomatis sesuai Plat Nomor.
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <!-- Auto Generate: Tipe Motor -->
+              <div class="col-md-6">
+                <label class="form-label" for="tipeMotor">Tipe Motor</label>
+                <div class="input-group-custom">
+                  <i class="fa-solid fa-motorcycle input-icon"></i>
+                  <input type="text" id="tipeMotor" class="form-control-custom" readonly placeholder="Otomatis terisi...">
+                </div>
+              </div>
+
+              <!-- Auto Generate: Unit Kerja -->
+              <div class="col-md-6">
+                <label class="form-label" for="unitKerja">Unit Kerja / Cabang</label>
+                <div class="input-group-custom">
+                  <i class="fa-solid fa-building-user input-icon"></i>
+                  <input type="text" id="unitKerja" class="form-control-custom" readonly placeholder="Otomatis terisi...">
+                </div>
+              </div>
+            </div>
+
+            <!-- Kilometer Terkini -->
+            <div class="mb-4">
+              <label class="form-label" for="kmTerkini">Kilometer Terkini (Odometer)</label>
+              <div class="input-group-custom">
+                <i class="fa-solid fa-gauge-high input-icon"></i>
+                <input type="number" id="kmTerkini" class="form-control-custom" placeholder="Contoh: 15420" min="0" required>
+              </div>
+            </div>
+
+            <!-- Section 2: Upload Foto Bukti -->
+            <div class="form-section-title mt-4">
+              <i class="fa-solid fa-camera"></i> Dokumentasi & Berkas Kendaraan
+            </div>
+
+            <div class="row g-3 mb-4">
+              <!-- Upload Foto Depan -->
+              <div class="col-md-4">
+                <label class="form-label">Foto Depan Serong</label>
+                <div class="upload-card" onclick="document.getElementById('fotoDepan').click()">
+                  <div class="upload-icon-wrapper">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                  </div>
+                  <div class="upload-title">Unggah Foto</div>
+                  <div class="upload-hint">Klik / Drag foto di sini</div>
+                  <input type="file" id="fotoDepan" accept="image/*" class="d-none" onchange="handleFilePreview(this, 'previewDepan', 'imgDepan')" required>
+                </div>
+                <div id="previewDepan" class="preview-container">
+                  <img id="imgDepan" class="preview-image" src="" alt="Preview Depan">
+                  <button type="button" class="btn-remove-preview" onclick="removeFile('fotoDepan', 'previewDepan')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </div>
+
+              <!-- Upload Foto Belakang -->
+              <div class="col-md-4">
+                <label class="form-label">Foto Belakang Serong</label>
+                <div class="upload-card" onclick="document.getElementById('fotoBelakang').click()">
+                  <div class="upload-icon-wrapper">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                  </div>
+                  <div class="upload-title">Unggah Foto</div>
+                  <div class="upload-hint">Klik / Drag foto di sini</div>
+                  <input type="file" id="fotoBelakang" accept="image/*" class="d-none" onchange="handleFilePreview(this, 'previewBelakang', 'imgBelakang')" required>
+                </div>
+                <div id="previewBelakang" class="preview-container">
+                  <img id="imgBelakang" class="preview-image" src="" alt="Preview Belakang">
+                  <button type="button" class="btn-remove-preview" onclick="removeFile('fotoBelakang', 'previewBelakang')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </div>
+
+              <!-- Upload Foto STNK -->
+              <div class="col-md-4">
+                <label class="form-label">Foto Dokumen STNK</label>
+                <div class="upload-card" onclick="document.getElementById('fotoSTNK').click()">
+                  <div class="upload-icon-wrapper">
+                    <i class="fa-solid fa-file-invoice"></i>
+                  </div>
+                  <div class="upload-title">Unggah STNK</div>
+                  <div class="upload-hint">Klik / Drag foto di sini</div>
+                  <input type="file" id="fotoSTNK" accept="image/*" class="d-none" onchange="handleFilePreview(this, 'previewSTNK', 'imgSTNK')" required>
+                </div>
+                <div id="previewSTNK" class="preview-container">
+                  <img id="imgSTNK" class="preview-image" src="" alt="Preview STNK">
+                  <button type="button" class="btn-remove-preview" onclick="removeFile('fotoSTNK', 'previewSTNK')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" id="btnSubmit" class="btn btn-pnm w-100 py-3 text-uppercase fs-6">
+              <i class="fa-solid fa-paper-plane me-2"></i> Kirim Presensi KDO
+            </button>
+          </form>
+
+          <!-- Alert Output Message -->
+          <div id="alertContainer" class="mt-4"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwPAA7Zs9lCHnut3GuvcrMcDzVRZw5TYVvDdUd-XtHuQqsfoessl2OWzmjzHxikmUsgZw/exec"; 
+
+    let globalDetailData = [];
+
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchDataDetail();
+    });
+
+    function fetchDataDetail() {
+      fetch(SCRIPT_URL)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.detail) {
+            globalDetailData = data.detail;
+            populatePlatDatalist(globalDetailData);
+          }
+        })
+        .catch(err => console.error("Gagal mengambil data Sheet DETAIL:", err));
+    }
+
+    function populatePlatDatalist(data) {
+      const datalist = document.getElementById('platList');
+      datalist.innerHTML = '';
+      data.forEach(row => {
+        if (row[2]) {
+          let option = document.createElement('option');
+          option.value = row[2];
+          datalist.appendChild(option);
+        }
+      });
+    }
+
+    function autoFillDetail() {
+      const selectedPlat = document.getElementById('platNomor').value.trim();
+      const match = globalDetailData.find(row => String(row[2]).toLowerCase() === selectedPlat.toLowerCase());
+
+      const unitInput = document.getElementById('unitKerja');
+      const tipeInput = document.getElementById('tipeMotor');
+
+      if (match) {
+        unitInput.value = match[1] || ''; 
+        tipeInput.value = match[3] || '';
+
+        unitInput.classList.add('autofill-highlight');
+        tipeInput.classList.add('autofill-highlight');
+        setTimeout(() => {
+          unitInput.classList.remove('autofill-highlight');
+          tipeInput.classList.remove('autofill-highlight');
+        }, 800);
+      } else {
+        unitInput.value = '';
+        tipeInput.value = '';
+      }
+    }
+
+    // Image Preview Handling
+    function handleFilePreview(input, previewContainerId, imgId) {
+      const file = input.files[0];
+      const previewContainer = document.getElementById(previewContainerId);
+      const img = document.getElementById(imgId);
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          img.src = e.target.result;
+          previewContainer.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeFile(inputId, previewContainerId) {
+      const input = document.getElementById(inputId);
+      const previewContainer = document.getElementById(previewContainerId);
+      input.value = '';
+      previewContainer.style.display = 'none';
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) resolve(null);
+        const reader = new FileReader();
+        reader.onload = () => resolve({ name: file.name, base64: reader.result });
+        reader.onerror = error => reject(error);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+
+      const btn = document.getElementById('btnSubmit');
+      const alertContainer = document.getElementById('alertContainer');
+
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin me-2"></i> Mengirim Data...`;
+      alertContainer.innerHTML = '';
+
+      try {
+        const fotoDepan = await fileToBase64(document.getElementById('fotoDepan').files[0]);
+        const fotoBelakang = await fileToBase64(document.getElementById('fotoBelakang').files[0]);
+        const fotoSTNK = await fileToBase64(document.getElementById('fotoSTNK').files[0]);
+
+        const payload = {
+          pengguna: document.getElementById('pengguna').value,
+          platNomor: document.getElementById('platNomor').value,
+          tipeMotor: document.getElementById('tipeMotor').value,
+          unitKerja: document.getElementById('unitKerja').value,
+          kmTerkini: document.getElementById('kmTerkini').value,
+          fotoDepan: fotoDepan,
+          fotoBelakang: fotoBelakang,
+          fotoSTNK: fotoSTNK
+        };
+
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          body: JSON.stringify(payload)
+        });
+
+        const resData = await response.json();
+
+        if (resData.status === "SUCCESS") {
+          alertContainer.innerHTML = `
+            <div class="alert alert-success d-flex align-items-center rounded-3 shadow-sm border-0" role="alert">
+              <i class="fa-solid fa-circle-check me-3 fs-3 text-success"></i>
+              <div>
+                <strong class="d-block">Presensi Berhasil Disimpan!</strong>
+                <span class="small">${resData.message}</span>
+              </div>
+            </div>`;
+          document.getElementById('formKDO').reset();
+          document.querySelectorAll('.preview-container').forEach(el => el.style.display = 'none');
+        } else {
+          throw new Error(resData.message);
+        }
+
+      } catch (err) {
+        alertContainer.innerHTML = `
+          <div class="alert alert-danger d-flex align-items-center rounded-3 shadow-sm border-0" role="alert">
+            <i class="fa-solid fa-circle-xmark me-3 fs-3 text-danger"></i>
+            <div>
+              <strong class="d-block">Gagal Mengirim Presensi</strong>
+              <span class="small">${err.message || 'Terjadi kesalahan sistem.'}</span>
+            </div>
+          </div>`;
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane me-2"></i> Kirim Presensi KDO`;
+      }
+    }
+  </script>
+</body>
+</html>
